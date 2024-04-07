@@ -36,7 +36,6 @@ chirping sound.
 - [] timer
 
 ## Optional
-
 - [ ] Clean-Up Code
    - [] pwm
    - [] i2c (Accelerometer)
