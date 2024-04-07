@@ -29,7 +29,6 @@ the LED matrix using SPI protocol.
 chirping sound.
 
 ## Required Libraries
-- [] main
 - [] pwm
 - [] i2c (Accelerometer)
 - [] spi (8x8 Matrix)
@@ -39,7 +38,6 @@ chirping sound.
 ## Optional
 
 - [ ] Clean-Up Code
-   - [] main
    - [] pwm
    - [] i2c (Accelerometer)
    - [] spi (8x8 Matrix)
