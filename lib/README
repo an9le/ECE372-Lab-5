@@ -1,46 +1,47 @@
+# Lab 5 Libraries
 
-This directory is intended for project specific (private) libraries.
-PlatformIO will compile them to static libraries and link into executable file.
+Each one of the folders adjacent to this `README.md` designate a library for for controlling different components of the system.
 
-The source code of each library should be placed in a an own separate directory
-("lib/your_library_name/[here are source files]").
+   You will need to create a circuit using your breadboard, jumper wires,
+accelerometer, 8x8 led matrix, piezo speaker and a push button switch.
+There should be no special function registers used in the code for
+main(). Arduino libraries for Serial.println can be used for printing
+x,y, and z accelerometer data and also debugging. You will need to
+build your own timer function for delays when needed.
 
-For example, see a structure of the following two libraries `Foo` and `Bar`:
+   Read the MPU 6050 accelerometer datasheets. You will use the WHO_AM_I
+register (pg. 46 of register map) as the SLA. The register that you
+will be reading from are the ACCEL_nOUT registers (pg. 30 of register
+map). There are two 8-bit registers for X, Y, and Z. These registers
+will need to be read and combined to gather the necessary information.
+Finally, you need to obtain the power management register information
+(pg. 41 of register map). Before developing your threshold values, you
+should verify that data changes in all orthogonal x,y and z directions.
 
-|--lib
-|  |
-|  |--Bar
-|  |  |--docs
-|  |  |--examples
-|  |  |--src
-|  |     |- Bar.c
-|  |     |- Bar.h
-|  |  |- library.json (optional, custom build options, etc) https://docs.platformio.org/page/librarymanager/config.html
-|  |
-|  |--Foo
-|  |  |- Foo.c
-|  |  |- Foo.h
-|  |
-|  |- README --> THIS FILE
-|
-|- platformio.ini
-|--src
-   |- main.c
+   You will need to determine your accelerometer threshold tilt value
+(approximately 45degrees from rest position) based on actual readings
+that you obtain.
 
-and a contents of `src/main.c`:
-```
-#include <Foo.h>
-#include <Bar.h>
+   Read the 8x8 LED Matrix display datasheet (MAX7221 on how to interface
+the LED matrix using SPI protocol.
 
-int main (void)
-{
-  ...
-}
+   Use the passive piezo buzzer device. The alarm sound should be a
+chirping sound.
 
-```
+## Required Libraries
+- [] main
+- [] pwm
+- [] i2c (Accelerometer)
+- [] spi (8x8 Matrix)
+- [] switch
+- [] timer
 
-PlatformIO Library Dependency Finder will find automatically dependent
-libraries scanning project source files.
+## Optional
 
-More information about PlatformIO Library Dependency Finder
-- https://docs.platformio.org/page/librarymanager/ldf.html
+- [ ] Clean-Up Code
+   - [] main
+   - [] pwm
+   - [] i2c (Accelerometer)
+   - [] spi (8x8 Matrix)
+   - [] switch
+   - [] timer
