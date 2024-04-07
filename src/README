@@ -23,3 +23,10 @@ while loop in main()
 • Read from Z high register -> Read from Z low register
 • Combine registers and serial print information
 • Stop the I2C trans
+
+## Required Libraries
+- [] main
+
+## Optional
+- [ ] Clean-Up Code
+   - [] main
