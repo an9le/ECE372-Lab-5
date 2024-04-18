@@ -54,6 +54,12 @@ volatile face face_state = smile;
 volatile char count = 0;
 volatile int result = 0;
 
+
+// TODO:
+// - [ ] Check Angle of Accellerometer
+//    - [ ] (if >  45 degrees) -> Frown & Alarm
+//    - [ ] (if <= 45 degrees) -> Smile & No Alarm
+// - [ ] Button Interrupt Stops Alarm (Until we get back to smile)
 int main(void) {
 
     sei(); // Enable global interrupts
