@@ -58,9 +58,8 @@ void write(unsigned char data){
   wait_for_completion;
 }
 
-
 // function that reads 6 bytes of accelerometer data
-void Read_Acc(unsigned char SLA, unsigned char MEMADDRESS) {
+void Read_from(unsigned char SLA, unsigned char MEMADDRESS) {
 
   StartI2C_Trans(SLA); //Starts the I2C transaction
   write(MEMADDRESS);  // internal address to start read from.
@@ -78,6 +77,6 @@ void Read_Acc(unsigned char SLA, unsigned char MEMADDRESS) {
   StopI2C_Trans();
 }
 
-unsigned char read_Data(){
+unsigned char Read_data(){
   return TWDR;    // returns the data from the data register
 }
