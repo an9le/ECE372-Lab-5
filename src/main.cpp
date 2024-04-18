@@ -67,6 +67,7 @@ int main(void) {
     StartI2C_Trans(ADDRESS);
     write(POWER_CTRL);
     write(WAKE);
+    Serial.begin(9600);
 
     // while loop
     while(1) {
@@ -87,8 +88,8 @@ int main(void) {
       yPos = ((yPos << 8) | Read_data());
       zPos = ((zPos << 8) | Read_data());
 
+
       Serial.println();
-      Serial.begin(9600);
       Serial.print("X");
       Serial.println(xPos);
       Serial.print("Y");
