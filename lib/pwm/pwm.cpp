@@ -15,16 +15,16 @@
 const int sys_clk = 16000000;
 
 void initPWMTimer3() {
-    // Open PE3 as Output
-    DDRE |= (1 << DDE3);
+    // Open PE4 as Output
+    DDRE |= (1 << DDE4);
 
     // Set Timer 3 to PWM mode 15 (Up to TOP:ICR3) [1111]
     TCCR3A |= (1 << WGM30) | (1 << WGM31); // COM3A1 Controls Output Compare
     TCCR3B |= (1 << WGM32) | (1 << WGM33);
 
     // Non-Inverting Mode [10]
-    TCCR3A &= ~(1 << COM3C0);
-    TCCR3A |=  (1 << COM3C1);
+    TCCR3A &= ~(1 << COM3B0);
+    TCCR3A |=  (1 << COM3B1);
 
     // Set Prescaler to 1 [001]
     TCCR3B |= (1 << CS30);
@@ -48,9 +48,13 @@ void chirp() {
     }
 }
 
-// void alarmOn() { }
+void alarmOn() { 
+    TCCR3B |= (1 << CS30);
+}
 
-// void alarmOff() { }
+void alarmOff() { 
+    TCCR3B &= ~(1 << CS30);
+}
 
 // Description:
 //          Changes the duty cycle of the PWM signal according to 10-bit ADC Values
