@@ -74,7 +74,6 @@ int main(void) {
       int yPos = Read_data();
       int zPos = Read_data();
 
-      chirp();
 
       Read_from(ADDRESS, X_HIGH);
       Read_from(ADDRESS, X_LOW);
@@ -89,6 +88,7 @@ int main(void) {
 
       if ((xPos >= 8000) || (xPos <= -8000) || (zPos <= 13000)) {
         frown();
+        chirp();
       }
       else {
         smile();
