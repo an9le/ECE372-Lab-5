@@ -87,8 +87,16 @@ int main(void) {
       yPos = ((yPos << 8) | Read_data());
       zPos = ((zPos << 8) | Read_data());
 
-      smile();
-      delayMs(10000);
+      Serial.println();
+      Serial.begin(9600);
+      Serial.print("X");
+      Serial.println(xPos);
+      Serial.print("Y");
+      Serial.println(yPos);
+      Serial.print("Z");
+      Serial.println(zPos);
+      Serial.println("------------");
+
       if ((xPos >= 8000) || (xPos <= -8000) || (zPos <= 13000)) {
         frown();
 
