@@ -3,7 +3,7 @@
 ## Required Libraries
 - [] pwm
 - [] i2c (Accelerometer)
-- [] spi (8x8 Matrix)
+- [X] spi (8x8 Matrix)
 - [] switch
 - [] timer
 
@@ -11,12 +11,12 @@
 - [ ] Clean-Up Code
    - [] pwm
    - [] i2c (Accelerometer)
-   - [] spi (8x8 Matrix)
+   - [X] spi (8x8 Matrix)
    - [] switch
    - [] timer
 
 ## spi.cpp
-   1.All communication with the 8 x8 led matrix must be done over the SPI
+   1.All communication with the 8 x 8 led matrix must be done over the SPI
    related pins.
    2.Read the 8x8 MAX7219 datasheet for setting up SPI mode.
 
