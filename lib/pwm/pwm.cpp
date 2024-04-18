@@ -10,6 +10,7 @@
 //----------------------------------------------------------------------//
 #include <avr/io.h>
 #include "pwm.h"
+#include <timer.h>
 
 const int sys_clk = 16000000;
 
@@ -38,6 +39,7 @@ void changeFrequency(int frequency) {
 void chirp() {
     for (int frequency = 1000; frequency <= 4000; frequency++)
     {
+        delayMs(1);
         changeFrequency(frequency);
     }
 }
