@@ -33,7 +33,12 @@ void initPWMTimer3() {
 // Chirping Sound Should go From 1 kHz to 4 kHz
 void changeFrequency(int frequency) {
     int top_value = sys_clk / frequency; // Calculated Value for 'TOP'
+
     OCR3A = top_value;
+    OCR3AH = OCR3A >> 8;
+    OCR3AL = OCR3A;
+    OCR3AH = OCR3AH >> 1;
+    OCR3AL = OCR3AL >> 1;
 }
 
 void chirp() {
