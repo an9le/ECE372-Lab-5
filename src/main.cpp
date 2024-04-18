@@ -35,14 +35,20 @@
 
 // Define a set of states that can be used in the state machine using an enum.
 typedef enum switchStates {
-    waitPress,
-    debouncePress,
-    waitRelease,
-    debounceRelease
-} stateType;
+  waitPress,
+  debouncePress,
+  waitRelease,
+  debounceRelease
+} button;
+
+typedef enum faceStates {
+  smile,
+  frown
+} face;
 
 // Initialize states.  Remember to use volatile 
-volatile stateType state = waitPress;
+volatile button button_state = waitPress;
+volatile face face_state = smile;
 
 // Variables 
 volatile char count = 0;
@@ -67,15 +73,15 @@ int main(void) {
     // while loop
     while(1) {
 
-        switch(state) {
+        switch(button_state) {
             case debouncePress:
                 delayMs(1);
-                state = waitRelease;
+                button_state = waitRelease;
             break;
 
             case debounceRelease:
                 delayMs(1);
-                state = waitPress;
+                button_state = waitPress;
             break;
 
             default:
@@ -86,23 +92,18 @@ int main(void) {
 return 0;
 }
 
-/* Implement an Pin Change Interrupt which handles the switch being
-* pressed and released. When the switch is pressed and released, the LEDs
-* change at twice the original rate. If the LEDs are already changing at twice
-* the original rate, it goes back to the original rate.
-*/
 
 // Function called when the button is pressed, i.e signal input from PORTD2
 ISR(INT2_vect) { 
 
   // Normal State
-  if(state == waitPress) {
-    state = debouncePress;
+  if(button_state == waitPress) {
+    button_state = debouncePress;
   }
 
   // Wait
-  else if(state == waitRelease) {
-    state = debounceRelease;
+  else if(button_state == waitRelease) {
+    button_state = debounceRelease;
   }
 
 }
