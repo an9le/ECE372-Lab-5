@@ -3,8 +3,7 @@
 // Date: 04/16/2024
 // Assignment: Lab 5
 //
-// Description: The I2C file uses functions to wake up, initiate a start condition, stop condition for the I2C transmission, loads the data passed into I2C data register, and applies the functions given by the instructions
-//
+//  It defines functions to initialize the I2C hardware, start and stop I2C transactions, write to, and read from an I2C device based on the instructions given.
 //                  `
 //              
 //----------------------------------------------------------------------//
@@ -12,36 +11,36 @@
 #include <avr/io.h>
 #include "Arduino.h"
 
-#define wait_for_completion while(!(TWCR & (1 << TWINT)))
+#define wait_for_completion while(!(TWCR & (1 << TWINT))) // waits until the I2C hardware has completed an operation
 #define WRITE_BIT 0
 #define READ_BIT 1
 
-
+//Function to initialize the I2C hardware
 void initI2C() {
-  PRR0 &= ~(1<<PRTWI);  // wake up I2C module on AT2560 power management register
+  PRR0 &= ~(1<<PRTWI);  // wake up I2C module on AT2560 power management register, disables power reduction mode
   
   TWSR |= (1 << TWPS0);
-  TWSR &= ~(1 << TWPS1);  // prescaler power = 1
+  TWSR &= ~(1 << TWPS1);  // Sets prescaler to 1
 
   //TWBR=((CPU Clock frequency)/(SCL frequency)-16)/(2*(4)^TWPS)
-  TWBR = 0xC6; // bit rate generator = 200kHz  (TWBR = 32)
+  TWBR = 0xC6; // bit rate generator = 200kHz  (TWBR = 32), settting the interface bit rate register TWBR
 
-  TWCR |= (1 << TWINT ) | (1 << TWEN); // enable two wire interface
+  TWCR |= (1 << TWINT ) | (1 << TWEN); // enables two wire interface and clears the interrupt flag
 
 }
 
-
+// Function to start an I2C transmission
 void StartI2C_Trans(unsigned char SLA) {
 
 // this function initiates a start condition and calls slave device with SLA plus write bit
 //unsigned int stat;
 
   TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN); // clear TWINT, intiate a start condition and enable
-  wait_for_completion;
+  wait_for_completion; //waits for the operation to complete
   
-  TWDR = (SLA << 1); // slave address + write bit '0'
+  TWDR = (SLA << 1); // slave address + write bit '0' for writing
 
-  TWCR = ((1<<TWINT)| (1<<TWEN));  // trigger action:clear flag and enable TWI
+  TWCR = ((1<<TWINT)| (1<<TWEN));  // trigger action:clear flag and enable I2C
   wait_for_completion;
 
 }
@@ -54,25 +53,23 @@ void StopI2C_Trans() {
 }
 void write(unsigned char data){
   // this function loads the data passed into the I2C data register and transmits
-  TWDR = data; //load data into TWDR register
-  TWCR = (1<<TWINT)|(1<<TWEN);  // trigger action:  clear flag and enable TWI
+  TWDR = data; //load data into TWDR (data) register
+  TWCR = (1<<TWINT)|(1<<TWEN);  // trigger action:  clear flag and enable TWI (I2C)
   wait_for_completion;
 }
 
 
-// function that reads 6 bytes of accelerometer data from ADXL345
-// inputs are ADXL address and first register address for Xaxis low byte
-//  returns pointer to static array
+// function that reads 6 bytes of accelerometer data
 void Read_Acc(unsigned char SLA, unsigned char MEMADDRESS) {
 
-  StartI2C_Trans(SLA);
+  StartI2C_Trans(SLA); //Starts the I2C transaction
   write(MEMADDRESS);  // internal address to start read from.
 
-  TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN); // restart to switch to read mode
+  TWCR = (1<<TWINT)|(1<<TWSTA)|(1<<TWEN); // restarts to switch to read mode (repeated start condition)
   wait_for_completion;
  
   TWDR = (SLA << 1) | READ_BIT; // 7 bit address for slave plus read bit
-  TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWEA);// trigger 
+  TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWEA);// trigger, enabling acknowledgement
   wait_for_completion;
 
   TWCR = (1 << TWINT) | (1 << TWEN);// trigger with master sending ack
@@ -82,5 +79,5 @@ void Read_Acc(unsigned char SLA, unsigned char MEMADDRESS) {
 }
 
 unsigned char read_Data(){
-  return TWDR;    // returning stored TWDR from Read_Acc
+  return TWDR;    // returns the data from the data register
 }
