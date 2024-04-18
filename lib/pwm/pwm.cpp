@@ -1,21 +1,17 @@
-#include <avr/io.h>
-#include "pwm.h"
-#include "timer.h"
 // Author: Alek Sepulveda
 // Net ID: aleksepulveda
-// Date: 04/01/2024
-// Assignment: Lab 4
+// Date: 04/17/2024
+// Assignment: Lab 5
 //
 // Description: Use Timer3 to generate a PWM signal
-//              for controlling a DC motor, implements a
-//                  `changeDutyCycle()`
-//              function for controlling the speed of the DC motor
+//              for controlling a piezo buzzer/speaker, implements a
+//                  `changeFrequency()`
+//              function for controlling the piezo sound
 //----------------------------------------------------------------------//
-
+#include <avr/io.h>
 #include "pwm.h"
 
-const int frequency = 10000; // Frequency of Signal 
-const int top_value = 16000000 / frequency; // Calculated Value for 'TOP'
+const int sys_clk = 16000000;
 
 void initPWMTimer3() {
     // Open PE3 as Output
@@ -35,17 +31,20 @@ void initPWMTimer3() {
 
 // Chirping Sound Should go From 1 kHz to 4 kHz
 void changeFrequency(int frequency) {
-    int top_value = 16000000 / frequency; // Calculated Value for 'TOP'
+    int top_value = sys_clk / frequency; // Calculated Value for 'TOP'
     OCR3A = top_value;
 }
 
-void alarmOn() {
-
+void chirp() {
+    for (int frequency = 1000; frequency <= 4000; frequency++)
+    {
+        changeFrequency(frequency);
+    }
 }
 
-void alarmOff() {
+// void alarmOn() { }
 
-}
+// void alarmOff() { }
 
 // Description:
 //          Changes the duty cycle of the PWM signal according to 10-bit ADC Values

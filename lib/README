@@ -1,7 +1,7 @@
 # Lab 5 Libraries
 
 ## Required Libraries
-- [] pwm
+- [X] pwm
 - [] i2c (Accelerometer)
 - [X] spi (8x8 Matrix)
 - [] switch
@@ -9,7 +9,7 @@
 
 ## Optional
 - [ ] Clean-Up Code
-   - [] pwm
+   - [X] pwm
    - [] i2c (Accelerometer)
    - [X] spi (8x8 Matrix)
    - [] switch

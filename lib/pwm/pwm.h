@@ -3,7 +3,7 @@
 
 void initPWMTimer3();
 void changeFrequency(int frequency);
-void alarmOn();
-void alarmOff();
+//void alarmOn();
+//void alarmOff();
 
 #endif
