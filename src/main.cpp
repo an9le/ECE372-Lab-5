@@ -89,26 +89,29 @@ int main(void) {
       zPos = ((zPos << 8) | Read_data());
 
 
-      Serial.println();
+      /*Serial.println();
       Serial.print("X");
       Serial.println(xPos);
       Serial.print("Y");
       Serial.println(yPos);
       Serial.print("Z");
       Serial.println(zPos);
-      Serial.println("------------");
+      Serial.println("------------");  */              
 
-      if ((xPos >= 8000) || (xPos <= -8000) || (zPos <= 13000)) {
-        frown();
+
+      if ((xPos >= 8000) | (xPos <= -8000) | (zPos <= 13000)) {
+        smile();
 
         // Check if Alarm Should be Running
         if (en_alarm_flag) {
-          chirp();
+          
         }
       }
       else {
-        en_alarm_flag = 1; // Enable Alarm
-        smile();
+        en_alarm_flag = 1;
+        frown();
+        chirp();
+
       }
 
       switch(button_state) {
@@ -119,7 +122,7 @@ int main(void) {
 
         case debounceRelease:
           delayMs(1);
-          en_alarm_flag = 0; // Disable Alarm
+          en_alarm_flag = 0;
           button_state = waitPress;
         break;
 
