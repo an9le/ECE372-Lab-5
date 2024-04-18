@@ -37,7 +37,7 @@ void changeFrequency(int frequency) {
 }
 
 void chirp() {
-    for (int frequency = 1000; frequency <= 20000; frequency++)
+    for (int frequency = 1000; frequency <= 4000; frequency++)
     {
         changeFrequency(frequency);
     }
