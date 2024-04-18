@@ -1,3 +1,14 @@
+// Author: Juan Campista
+// Net ID: jfcampista
+// Date: 04/16/2024
+// Assignment: Lab 5
+//
+// Description: Initializing Timer1 , also incorperating delay method
+//                
+//                  `
+//              
+//----------------------------------------------------------------------//
+
 #include <avr/io.h>
 #include "timer.h"
 
