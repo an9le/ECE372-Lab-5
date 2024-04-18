@@ -6,8 +6,8 @@
 // Description: The shell piecing all parts together
 /*
   Requirements:
-    - [X] pwm (piezo speaker)
-    - [X] i2c (Accelerometer)
+    - [X] pwm
+    - [] i2c (Accelerometer)
     - [X] spi (8x8 Matrix)
     - [X] switch
     - [X] timer
@@ -24,14 +24,14 @@
 
 // ADXL register addresses and configuration
 #define ADDRESS 0x68  
-#define POWER_CTRL 0x2D
+#define POWER_CTRL 0x6B
 #define WAKE    0x00
-#define X_LOW   0x32
-#define X_HIGH  0x33
-#define Y_LOW   0x34
-#define Y_HIGH  0x35
-#define Z_LOW   0x36
-#define Z_HIGH  0x37
+#define X_LOW   0x3C
+#define X_HIGH  0x3B
+#define Y_LOW   0x3E
+#define Y_HIGH  0x3D
+#define Z_LOW   0x40
+#define Z_HIGH  0x3F
 
 // Define a set of states that can be used in the state machine using an enum.
 typedef enum switchStates {
