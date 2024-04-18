@@ -16,7 +16,7 @@ const int sys_clk = 16000000;
 
 void initPWMTimer3() {
     // Open PE3 as Output
-    DDRE |= (1 << DDE3);
+    DDRE |= (1 << DDE4);
 
     // Set Timer 3 to PWM mode 15 (Up to TOP:ICR3) [1111]
     TCCR3A |= (1 << WGM30) | (1 << WGM31); // COM3A1 Controls Output Compare
@@ -37,8 +37,8 @@ void changeFrequency(int frequency) {
     OCR3A = top_value;
     OCR3AH = OCR3A >> 8;
     OCR3AL = OCR3A;
-    OCR3AH = OCR3AH >> 1;
-    OCR3AL = OCR3AL >> 1;
+    OCR3BH = OCR3AH >> 1;
+    OCR3BL = OCR3AL >> 1;
 }
 
 void chirp() {
