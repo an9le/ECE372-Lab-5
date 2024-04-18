@@ -13,7 +13,7 @@
 #include "timer.h"
 
 void initTimer1() {
-  //disables waveform
+  //Clears waveform
   TCCR1A &= ~(1 << WGM10);     
   TCCR1A &= ~(1 << WGM11);
 
@@ -29,10 +29,12 @@ void delayMs(unsigned int delay) {
     TCCR1B |= (1 << CS10) | (1 << CS11);
     TCCR1B &= ~(1 << CS12);
 
-    while (count < delay) {         
+    while (count < delay) {    
+        // Clearing output compare A flag
         TIFR1 |= (1 << OCF1A);
-        TCNT1 = 0;
-
+        // Resetting counter to 0
+        TCNT1 = 0; 
+        // wait until counter reaches delay
         while (! (TIFR1 & (1 << OCF1A)));
 
         count++;
