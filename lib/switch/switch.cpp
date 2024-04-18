@@ -1,3 +1,14 @@
+// Author: Juan Campista
+// Net ID: jfcampista
+// Date: 04/16/2024
+// Assignment: Lab 5
+//
+// Description: Initializing switch , enabling pull up resistor to read when high logic occurs
+//                 Using External interupt to seek when action occurs 
+//                  `
+//              
+//----------------------------------------------------------------------//
+
 #include <avr/io.h>
 #include "switch.h"
 
