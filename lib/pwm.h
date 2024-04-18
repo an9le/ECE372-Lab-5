@@ -2,7 +2,7 @@
 #define PWM_H
 
 void initPWMTimer3();
-void changeFrequency(int i);
+void changeFrequency(int frequency);
 void alarmOn();
 void alarmOff();
 
