@@ -6,8 +6,8 @@
 // Description: The shell piecing all parts together
 /*
   Requirements:
-    - [X] pwm
-    - [] i2c (Accelerometer)
+    - [X] pwm (piezo speaker)
+    - [X] i2c (Accelerometer)
     - [X] spi (8x8 Matrix)
     - [X] switch
     - [X] timer
@@ -47,6 +47,7 @@ volatile button button_state = waitPress;
 // Variables 
 volatile char count = 0;
 volatile int result = 0;
+volatile bool en_alarm_flag = 1;
 
 // TODO:
 // - [ ] Check Angle of Accellerometer
@@ -88,9 +89,12 @@ int main(void) {
 
       if ((xPos >= 8000) || (xPos <= -8000) || (zPos <= 13000)) {
         frown();
-        chirp();
+        if (en_alarm_flag) {
+          chirp();
+        }
       }
       else {
+        en_alarm_flag = 1;
         smile();
       }
 
@@ -102,6 +106,7 @@ int main(void) {
 
         case debounceRelease:
           delayMs(1);
+          en_alarm_flag = 0;
           button_state = waitPress;
         break;
 
