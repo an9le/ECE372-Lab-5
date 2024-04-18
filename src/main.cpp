@@ -5,8 +5,8 @@
 //
 // Description: The shell piecing all parts together
 /*
-// Requirements:
-    - [] pwm
+  Requirements:
+    - [X] pwm
     - [] i2c (Accelerometer)
     - [X] spi (8x8 Matrix)
     - [X] switch
@@ -41,19 +41,12 @@ typedef enum switchStates {
   debounceRelease
 } button;
 
-typedef enum faceStates {
-  smile,
-  frown
-} face;
-
-// Initialize states.  Remember to use volatile 
+// Initialize state
 volatile button button_state = waitPress;
-volatile face face_state = smile;
 
 // Variables 
 volatile char count = 0;
 volatile int result = 0;
-
 
 // TODO:
 // - [ ] Check Angle of Accellerometer
@@ -69,30 +62,52 @@ int main(void) {
     initSwitch();
     initI2C();
 
-    Serial.begin(9600);
-    Serial.flush();
-
     // SLA Register address for configuring measurement mode
+    StartI2C_Trans(ADDRESS);
     write(POWER_CTRL);
     write(WAKE);
 
     // while loop
     while(1) {
 
-        switch(button_state) {
-            case debouncePress:
-                delayMs(1);
-                button_state = waitRelease;
-            break;
+      int xPos = Read_data();
+      int yPos = Read_data();
+      int zPos = Read_data();
 
-            case debounceRelease:
-                delayMs(1);
-                button_state = waitPress;
-            break;
+      chirp();
 
-            default:
-            break;
-        }
+      Read_from(ADDRESS, X_HIGH);
+      Read_from(ADDRESS, X_LOW);
+      Read_from(ADDRESS, Y_HIGH);
+      Read_from(ADDRESS, Y_LOW);
+      Read_from(ADDRESS, Z_HIGH);
+      Read_from(ADDRESS, Z_LOW);
+
+      xPos = ((xPos << 8) | Read_data());
+      yPos = ((yPos << 8) | Read_data());
+      zPos = ((zPos << 8) | Read_data());
+
+      if ((xPos >= 8000) || (xPos <= -8000) || (zPos <= 13000)) {
+        frown();
+      }
+      else {
+        smile();
+      }
+
+      switch(button_state) {
+        case debouncePress:
+          delayMs(1);
+          button_state = waitRelease;
+        break;
+
+        case debounceRelease:
+          delayMs(1);
+          button_state = waitPress;
+        break;
+
+        default:
+        break;
+      }
     }
 
 return 0;
@@ -104,6 +119,7 @@ ISR(INT2_vect) {
 
   // Normal State
   if(button_state == waitPress) {
+    chirp();
     button_state = debouncePress;
   }
 
