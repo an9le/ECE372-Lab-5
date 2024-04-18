@@ -87,14 +87,18 @@ int main(void) {
       yPos = ((yPos << 8) | Read_data());
       zPos = ((zPos << 8) | Read_data());
 
+      smile();
+      delayMs(10000);
       if ((xPos >= 8000) || (xPos <= -8000) || (zPos <= 13000)) {
         frown();
+
+        // Check if Alarm Should be Running
         if (en_alarm_flag) {
           chirp();
         }
       }
       else {
-        en_alarm_flag = 1;
+        en_alarm_flag = 1; // Enable Alarm
         smile();
       }
 
@@ -106,7 +110,7 @@ int main(void) {
 
         case debounceRelease:
           delayMs(1);
-          en_alarm_flag = 0;
+          en_alarm_flag = 0; // Disable Alarm
           button_state = waitPress;
         break;
 
