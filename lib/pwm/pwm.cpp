@@ -16,7 +16,7 @@ const int sys_clk = 16000000;
 
 void initPWMTimer3() {
     // Open PE3 as Output
-    DDRE |= (1 << DDE4);
+    DDRE |= (1 << DDE5);
 
     // Set Timer 3 to PWM mode 15 (Up to TOP:ICR3) [1111]
     TCCR3A |= (1 << WGM30) | (1 << WGM31); // COM3A1 Controls Output Compare
