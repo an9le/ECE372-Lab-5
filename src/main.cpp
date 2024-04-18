@@ -52,7 +52,7 @@ int main(void) {
 
     sei(); // Enable global interrupts
     initTimer1();
-    initPWM();
+    initPWMTimer3();
     initSPI();
     initSwitch();
     initI2C();
