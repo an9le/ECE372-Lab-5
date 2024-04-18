@@ -1,3 +1,13 @@
+// Author: Brian Flores
+// Net ID: brianflores
+// Date: 04/16/2024
+// Assignment: Lab 5
+//
+// Description: The I2C file uses functions to wake up, initiate a start condition, stop condition for the I2C transmission, loads the data passed into I2C data register, and applies the functions given by the instructions
+//
+//                  `
+//              
+//----------------------------------------------------------------------//
 #include "i2c.h"
 #include <avr/io.h>
 #include "Arduino.h"
