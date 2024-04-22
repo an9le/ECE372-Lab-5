@@ -6,6 +6,9 @@
    - [] main
 
 ## main.cpp
+
+![StateDiagram.drawio](/assets/StateDiagram.drawio.png)
+
 1. Two state machines are used for debouncing the switch and for
 implementing the display of the 8x8 LED smiley or frowny face.
 
