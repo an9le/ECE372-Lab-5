@@ -12,8 +12,6 @@
 #include "pwm.h"
 #include <timer.h>
 
-const int sys_clk = 16000000;
-
 void initPWMTimer3() {
     // Open PE4 as Output
     DDRE |= (1 << DDE4);
@@ -32,7 +30,7 @@ void initPWMTimer3() {
 
 // Chirping Sound Should go From 1 kHz to 4 kHz
 void changeFrequency(int frequency) {
-    int top_value = sys_clk / frequency; // Calculated Value for 'TOP'
+    int top_value = 16000000 / frequency; // Calculated Value for 'TOP'
 
     OCR3A = top_value;
     OCR3AH = OCR3A >> 8;
