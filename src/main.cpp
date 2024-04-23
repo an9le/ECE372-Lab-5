@@ -47,7 +47,6 @@ volatile button button_state = waitPress;
 // Variables 
 volatile char count = 0;
 volatile int result = 0;
-volatile bool en_alarm_flag = 1;
 
 // TODO:
 // - [ ] Check Angle of Accellerometer
@@ -67,51 +66,48 @@ int main(void) {
     StartI2C_Trans(ADDRESS);
     write(POWER_CTRL);
     write(WAKE);
+    StopI2C_Trans();
     Serial.begin(9600);
+
+    alarmOff();
 
     // while loop
     while(1) {
-
-      int xPos = Read_data();
-      int yPos = Read_data();
-      int zPos = Read_data();
-
+      
+      chirp();
 
       Read_from(ADDRESS, X_HIGH);
+      int xPos = Read_data();
       Read_from(ADDRESS, X_LOW);
+      xPos = ((xPos << 8) | (Read_data()));
       Read_from(ADDRESS, Y_HIGH);
+      int yPos = Read_data();
       Read_from(ADDRESS, Y_LOW);
+      yPos = ((yPos << 8) | (Read_data()));
       Read_from(ADDRESS, Z_HIGH);
+      int zPos = Read_data();
       Read_from(ADDRESS, Z_LOW);
-
-      xPos = ((xPos << 8) | Read_data());
-      yPos = ((yPos << 8) | Read_data());
-      zPos = ((zPos << 8) | Read_data());
-
-
-      /*Serial.println();
+      zPos = ((zPos << 8) | (Read_data()));
+      
+      Serial.println();
       Serial.print("X");
       Serial.println(xPos);
       Serial.print("Y");
       Serial.println(yPos);
       Serial.print("Z");
       Serial.println(zPos);
-      Serial.println("------------");  */              
+      Serial.println("------------");              
 
 
       if ((xPos >= 8000) | (xPos <= -8000) | (zPos <= 13000)) {
         smile();
-
-        // Check if Alarm Should be Running
-        if (en_alarm_flag) {
-          
-        }
+        alarmOff();
+        Serial.println("SMILE");  
       }
       else {
-        en_alarm_flag = 1;
+        alarmOn();
         frown();
         chirp();
-
       }
 
       switch(button_state) {
@@ -122,7 +118,6 @@ int main(void) {
 
         case debounceRelease:
           delayMs(1);
-          en_alarm_flag = 0;
           button_state = waitPress;
         break;
 
@@ -140,7 +135,7 @@ ISR(INT2_vect) {
 
   // Normal State
   if(button_state == waitPress) {
-    chirp();
+    alarmOff();
     button_state = debouncePress;
   }
 
