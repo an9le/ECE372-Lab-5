@@ -69,7 +69,7 @@ int main(void) {
     StopI2C_Trans();
     Serial.begin(9600);
 
-    alarmOff();
+    //alarmOff();
 
     // while loop
     while(1) {
