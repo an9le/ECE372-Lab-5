@@ -32,6 +32,7 @@ void initPWMTimer3() {
 void changeFrequency(int frequency) {
     int top_value = 16000000 / frequency; // Calculated Value for 'TOP'
 
+    // 16000000
     OCR3A = top_value;
     OCR3AH = OCR3A >> 8;
     OCR3AL = OCR3A;
@@ -42,6 +43,7 @@ void changeFrequency(int frequency) {
 void chirp() {
     for (int frequency = 1000; frequency <= 4000; frequency++)
     {
+        alarmOn();
         changeFrequency(frequency);
     }
 }
