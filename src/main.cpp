@@ -100,19 +100,16 @@ int main(void) {
 
 
       if ((xPos >= 8000) | (xPos <= -8000) | (zPos <= 13000)) {
-        smile();
-        alarmOff();
-        Serial.println("SMILE");  
+        frown();
       }
       else {
-        alarmOn();
-        frown();
-        chirp();
+        smile();
       }
 
       switch(button_state) {
         case debouncePress:
           delayMs(1);
+          alarmOff();
           button_state = waitRelease;
         break;
 
@@ -135,13 +132,22 @@ ISR(INT2_vect) {
 
   // Normal State
   if(button_state == waitPress) {
-    alarmOff();
-    button_state = debouncePress;
+    chirp();
+    if (!(PIND & (1 << PD2))) {
+      alarmOff();
+      button_state = debouncePress;
+    }
+    else {
+      button_state = waitPress;
+    }
   }
 
   // Wait
   else if(button_state == waitRelease) {
-    button_state = debounceRelease;
+    alarmOff();
+      if (PIND & (1 << PD2)) {
+        button_state = debounceRelease;
+      }
   }
 
 }
