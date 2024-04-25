@@ -135,19 +135,19 @@ int main(void) {
         // In-Cycle State Machine For Debouncing Button/Switch
         switch(button_state) {
             case debouncePress:
-              delayMs(1);
-              alarmOff();
-              button_state = waitRelease;
-              break;
+                delayMs(1);
+                alarmOff();
+                button_state = waitRelease;
+                break;
 
-        case debounceRelease:
-              delayMs(1);
-              button_state = waitPress;
-            break;
+            case debounceRelease:
+                delayMs(1);
+                button_state = waitPress;
+                break;
 
-        default:
-            break;
-      }
+            default:
+                break;
+        }
     }
     return 0;
 }
