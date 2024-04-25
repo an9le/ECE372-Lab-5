@@ -133,6 +133,7 @@ int main(void) {
         }
 
         // In-Cycle State Machine For Debouncing Button/Switch
+        // - Updates Button/Switch States
         switch(button_state) {
             case debouncePress:
                 delayMs(1);
