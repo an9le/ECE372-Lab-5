@@ -55,7 +55,7 @@ typedef enum sysStates {
 volatile face face_state = quiet_smile;
 
 // Define Check to avoid 
-bool tilt_check(int xPos, int zPos){};
+bool tilt_check(int xPos, int zPos);
 
 int main(void) {
 
@@ -157,7 +157,7 @@ bool tilt_check(int xPos, int zPos) {
     {
         return true;
     }
-    false;
+    else return false;
 }
 
 // Function called when the button is pressed, i.e signal input from PORTD2
