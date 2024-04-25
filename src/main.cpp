@@ -60,7 +60,7 @@ volatile int yPos;
 volatile int zPos;
 
 // Define Check to avoid 
-bool tilt_check(int xPos, int yPos, int zPos);
+bool tilt_check(int xPos, int yPos);
 
 int main(void) {
 
@@ -69,6 +69,7 @@ int main(void) {
   initPWMTimer3();
   initSPI();
   initSwitch();
+  initI2C();
 
   StartI2C_Trans(ADDRESS);
   write(POWER_CTRL);
@@ -77,6 +78,7 @@ int main(void) {
   Serial.begin(9600);
 
   while(1) {
+
     Read_from(ADDRESS, X_HIGH);
     xPos = Read_data();
     Read_from(ADDRESS, X_LOW);
@@ -90,77 +92,69 @@ int main(void) {
     Read_from(ADDRESS, Z_LOW);
     zPos = ((zPos << 8) | (Read_data()));
 
-    Serial.print("X:");
-    Serial.println(xPos);
-    Serial.print("Y:");
-    Serial.println(yPos);
-    Serial.print("Z:");
-    Serial.println(zPos);
-    Serial.println("-----------");
-
     // Control Logic
     // - Transitions States with Respect to Tilt
-    switch (face_state) {
-      case quiet_smile:
-        alarmOff();
-        smile();
-      
-        if (tilt_check(xPos, yPos, zPos)) face_state = alarm_frown;
-      break;
-      //----------------
-      //----------------
-      case alarm_frown:
-        alarmOn();
-        frown();
-        chirp();
-      
-        if(!tilt_check(xPos, yPos, zPos)) face_state = alarm_smile;
-      break;
-      //----------------
-      //----------------
-      case quiet_frown:
-        alarmOff();
-        frown();
-      
-        if(!tilt_check(xPos, yPos, zPos)) face_state = quiet_smile;
-      break;
-        //----------------
-        //----------------
-      case alarm_smile:
-        alarmOn();
-        smile();
-        chirp();
+        switch (face_state) {
+            case quiet_smile:
+                alarmOff();
+                smile();
 
-        if(tilt_check(xPos, yPos, zPos)) face_state = alarm_frown;
-        break;
-        //----------------
-        //----------------
-        default:
-        break;
+                if (tilt_check(xPos, yPos)) face_state = alarm_frown;
+                break;
+            //----------------
+            //----------------
+            case alarm_frown:
+                alarmOn();
+                frown();
+                chirp();
+
+                if(!tilt_check(xPos, yPos)) face_state = alarm_smile;
+                break;
+            //----------------
+            //----------------
+            case quiet_frown:
+                alarmOff();
+                frown();
+
+                if(!tilt_check(xPos, yPos)) face_state = quiet_smile;
+                break;
+            //----------------
+            //----------------
+            case alarm_smile:
+                alarmOn();
+                smile();
+                chirp();
+
+                if(tilt_check(xPos, yPos)) face_state = alarm_frown;
+                break;
+            //----------------
+            //----------------
+            default:
+                break;
+        }
+
+        // In-Cycle State Machine For Debouncing Button/Switch
+        // - Updates Button/Switch States
+        switch(button_state) {
+            case debouncePress:
+                delayMs(1);
+                alarmOff();
+                button_state = waitRelease;
+                break;
+
+            case debounceRelease:
+                delayMs(1);
+                button_state = waitPress;
+                break;
+
+            default:
+                break;
+        }
     }
-
-    // In-Cycle State Machine For Debouncing Button/Switch
-    // - Updates Button/Switch States
-    switch(button_state) {
-      case debouncePress:
-        delayMs(1);
-        alarmOff();
-        button_state = waitRelease;
-      break;
-
-      case debounceRelease:
-        delayMs(1);
-        button_state = waitPress;
-      break;
-
-      default:
-      break;
-    }
-  }
-  return 0;
+    return 0;
 }
 
-bool tilt_check(int xPos, int yPos, int zPos) {
+bool tilt_check(int xPos, int yPos) {
     if ((xPos >= 8000) || (xPos <= -8000) || (yPos >= 8000) || (yPos <= -8000))
     {
         return true;
