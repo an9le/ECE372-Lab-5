@@ -5,12 +5,12 @@
 //
 // Description: The shell piecing all parts together
 /*
-  Requirements:
-    - [X] pwm
-    - [] i2c (Accelerometer)
-    - [X] spi (8x8 Matrix)
-    - [X] switch
-    - [X] timer
+	Requirements:
+	- [X] pwm
+	- [ ] i2c (Accelerometer)
+	- [X] spi (8x8 Matrix)
+	- [X] switch
+	- [X] timer
 */
 //----------------------------------------------------------------------//
 
@@ -23,7 +23,7 @@
 #include <i2c.h>
 
 // ADXL register addresses and configuration
-#define ADDRESS 0x68  
+#define ADDRESS 0x68
 #define POWER_CTRL 0x6B
 #define WAKE    0x00
 #define X_LOW   0x3C
@@ -35,119 +35,163 @@
 
 // Define a set of states that can be used in the state machine using an enum.
 typedef enum switchStates {
-  waitPress,
-  debouncePress,
-  waitRelease,
-  debounceRelease
+	waitPress,
+	debouncePress,
+	waitRelease,
+	debounceRelease
 } button;
 
 // Initialize state
 volatile button button_state = waitPress;
 
-// Variables 
-volatile char count = 0;
-volatile int result = 0;
+typedef enum sysStates {
+	quiet_smile,
+	quiet_frown,
+	alarm_smile,
+	alarm_frown
+} face;
 
-// TODO:
-// - [ ] Check Angle of Accellerometer
-//    - [ ] (if >  45 degrees) -> Frown & Alarm
-//    - [ ] (if <= 45 degrees) -> Smile & No Alarm
-// - [ ] Button Interrupt Stops Alarm (Until we get back to smile)
+// Initialize state
+volatile face face_state = quiet_smile;
+
+// Define Check to avoid
+bool tilt_check(int xPos, int zPos);
+
 int main(void) {
 
-    sei(); // Enable global interrupts
-    initTimer1();
-    initPWMTimer3();
-    initSPI();
-    initSwitch();
-    initI2C();
+	sei();
+	initTimer1();
+	initPWMTimer3();
+	initSPI();
 
-    // SLA Register address for configuring measurement mode
-    StartI2C_Trans(ADDRESS);
-    write(POWER_CTRL);
-    write(WAKE);
-    StopI2C_Trans();
-    Serial.begin(9600);
+	StartI2C_Trans(ADDRESS);
+	write(POWER_CTRL);
+	write(WAKE);
 
-    //alarmOff();
+	Serial.begin(9600);
 
-    // while loop
-    while(1) {
-      
-      chirp();
+	// Declare Position Vars
+	int xPos;
+	int yPos;
+	int zPos;
 
-      Read_from(ADDRESS, X_HIGH);
-      int xPos = Read_data();
-      Read_from(ADDRESS, X_LOW);
-      xPos = ((xPos << 8) | (Read_data()));
-      Read_from(ADDRESS, Y_HIGH);
-      int yPos = Read_data();
-      Read_from(ADDRESS, Y_LOW);
-      yPos = ((yPos << 8) | (Read_data()));
-      Read_from(ADDRESS, Z_HIGH);
-      int zPos = Read_data();
-      Read_from(ADDRESS, Z_LOW);
-      zPos = ((zPos << 8) | (Read_data()));
-      
-      Serial.println();
-      Serial.print("X");
-      Serial.println(xPos);
-      Serial.print("Y");
-      Serial.println(yPos);
-      Serial.print("Z");
-      Serial.println(zPos);
-      Serial.println("------------");              
+	while(1) {
+		xPos = Read_data();
+		yPos = Read_data();
+		zPos = Read_data();
 
+		Read_from(ADDRESS, X_HIGH);
+		Read_from(ADDRESS, X_LOW);
+		Read_from(ADDRESS, Y_HIGH);
+		Read_from(ADDRESS, Y_LOW);
+		Read_from(ADDRESS, Z_HIGH);
+		Read_from(ADDRESS, Z_LOW);
 
-      if ((xPos >= 8000) | (xPos <= -8000) | (zPos <= 13000)) {
-        frown();
-      }
-      else {
-        smile();
-      }
+		xPos = ((xPos << 8) | Read_data());
+		yPos = ((yPos << 8) | Read_data());
+		zPos = ((zPos << 8) | Read_data());
 
-      switch(button_state) {
-        case debouncePress:
-          delayMs(1);
-          alarmOff();
-          button_state = waitRelease;
-        break;
+		// Control Logic
+		// - Transitions States with Respect to Tilt
+		switch (face_state) {
+			case quiet_smile:
+				alarmOff();
+				smile();
 
-        case debounceRelease:
-          delayMs(1);
-          button_state = waitPress;
-        break;
+				if (tilt_check(xPos, zPos)) face_state = alarm_frown;
+				break;
+			//----------------
+			//----------------
+			case alarm_frown:
+				alarmOn();
+				frown();
+				chirp();
 
-        default:
-        break;
-      }
-    }
+				if(not tilt_check(xPos, zPos)) face_state = alarm_smile;
+				break;
+			//----------------
+			//----------------
+			case quiet_frown:
+				alarmOff();
+				frown();
 
-return 0;
+				if(not tilt_check(xPos, zPos)) face_state = quiet_smile;
+				break;
+			//----------------
+			//----------------
+			case alarm_smile:
+				alarmOn();
+				smile();
+				chirp();
+
+				if(tilt_check(xPos,zPos)) face_state = alarm_frown;
+				break;
+			//----------------
+			//----------------
+			default:
+				break;
+		}
+
+		// In-Cycle State Machine For Debouncing Button/Switch
+		switch(button_state) {
+			case debouncePress:
+				delayMs(1);
+				alarmOff();
+				button_state = waitRelease;
+				break;
+
+			case debounceRelease:
+					delayMs(1);
+					button_state = waitPress;
+				break;
+
+			default:
+				break;
+		}
+	}
+	return 0;
 }
 
+bool tilt_check(int xPos, int zPos) {
+	if ((xPos >= 8000) || (xPos <= -8000) || (zPos >= 13000))
+	{
+		return true;
+	}
+	else return false;
+}
 
 // Function called when the button is pressed, i.e signal input from PORTD2
-ISR(INT2_vect) { 
+ISR(INT2_vect) {
 
-  // Normal State
-  if(button_state == waitPress) {
-    chirp();
-    if (!(PIND & (1 << PD2))) {
-      alarmOff();
-      button_state = debouncePress;
-    }
-    else {
-      button_state = waitPress;
-    }
-  }
+	// Normal State
+	if(button_state == waitPress) {
 
-  // Wait
-  else if(button_state == waitRelease) {
-    alarmOff();
-      if (PIND & (1 << PD2)) {
-        button_state = debounceRelease;
-      }
-  }
+		if (!(PIND & (1 << PD2))) {
+			switch (face_state)
+			{
+				case alarm_frown:
+					face_state = quiet_frown;
+					break;
+				//----------------
+				//----------------
+				case alarm_smile:
+					face_state = quiet_smile;
+					break;
+				//----------------
+				//----------------
+				default:
+					break;
+			}
+			button_state = debouncePress;
+		}
 
+		else button_state = waitPress;
+	}
+
+	// Wait for Release
+	else if(button_state == waitRelease) {
+
+		if (PIND & (1 << PD2)) button_state = debounceRelease;
+
+	}
 }
