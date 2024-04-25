@@ -54,27 +54,3 @@ void alarmOn() {
 void alarmOff() { 
     TCCR3B &= ~(1 << CS30);
 }
-
-// Description:
-//          Changes the duty cycle of the PWM signal according to 10-bit ADC Values
-// Input:
-//          Right-Handed ADC_H and ADC_L -> `duty = (ADC_H << 8) | ADC_L`
-// void changeDutyCycle(uint16_t duty) {
-//     float duty_cycle; // Float Value for calculation
-
-//     // Checks if we are at ~2.5V
-//     if(duty == 512) {
-//         duty_cycle = 0;
-//     }
-//     // Calculation if Running Above 2.5V (Adjusted to Max at 1023)
-//     else if(duty > 512) {
-//         duty_cycle = ((duty + 1) - 512) / 512.0;
-//     }
-//     // Calculation if Running Below 2.5V (Adjusted to Max at 0)
-//     else if(duty < 512)
-//     {
-//         duty_cycle = (512 - duty) / 512.0;
-//     }
-
-//     OCR3A = (int) (duty_cycle * top_value); // Calulates OCRnA value and Casts to type int
-// }
