@@ -10,6 +10,7 @@
 //----------------------------------------------------------------------//
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include "switch.h"
 
 void initSwitch(){
@@ -20,7 +21,10 @@ void initSwitch(){
     PORTD |= (1 << PORTD2); 
 
     // External Interrupt Mask Register
-    EIFR |= (1 << INTF2); 
+    //EIFR |= (1 << INTF2); 
+
+    // Set up external interrupt on INT2 (PD2)
+    EICRA |= (1 << ISC20);  // Trigger INT2 any edge
     
     // External Interrupt Flag Register
     EIMSK |= (1 << INT2); 
