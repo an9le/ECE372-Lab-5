@@ -43,7 +43,6 @@ void changeFrequency(int frequency) {
 void chirp() {
     for (int frequency = 1000; frequency <= 4000; frequency++)
     {
-        alarmOn();
         changeFrequency(frequency);
     }
 }
